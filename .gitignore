@@ -1,0 +1,6 @@
+/dist
+/node_modules
+/certs
+/.env
+/public/node_modules
+/lambdas/get-users/node_modules
