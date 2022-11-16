@@ -21,8 +21,8 @@ class DeviceController {
     this.device.subscribe(LambdaEvent.USER_RETRIEVED);
     this.device.publish(ClientEvent.GET_USER, JSON.stringify({ id }));
     this.device.on('message', (topic: string, payload: any) => {
-      this.device.unsubscribe(LambdaEvent.USER_RETRIEVED);
       callback(JSON.parse(payload.toString()));
+      this.device.unsubscribe(LambdaEvent.USER_RETRIEVED);
     });
   };
 

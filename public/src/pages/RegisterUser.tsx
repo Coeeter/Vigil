@@ -9,13 +9,13 @@ import {
   InputRightAddon,
   Radio,
   RadioGroup,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { ClientEvent } from '../events/ClientEvent';
-import useSocket from '../hooks/useSocket';
+import fetch from '../utils/fetch';
 
 type FormValues = {
   name: string;
@@ -27,7 +27,6 @@ type FormValues = {
 };
 
 export default function RegisterUser() {
-  const socket = useSocket();
   const navigate = useNavigate();
 
   const {
@@ -42,7 +41,7 @@ export default function RegisterUser() {
     control,
   });
 
-  const onSubmit: SubmitHandler<FormValues> = ({
+  const onSubmit: SubmitHandler<FormValues> = async ({
     name,
     gender,
     birthday,
@@ -50,17 +49,19 @@ export default function RegisterUser() {
   }) => {
     const time = new Date(birthday).getTime();
     const emails = [...new Set(contacts.map(item => item.email))];
-    socket?.emit(
-      ClientEvent.CREATE_USER,
-      name,
-      gender,
-      time,
-      emails,
-      (id: string) => {
-        localStorage.setItem('token', id);
-        navigate('/', { replace: true });
-      }
-    );
+    try {
+      const response = await fetch(
+        ClientEvent.CREATE_USER,
+        name,
+        gender,
+        time,
+        emails
+      );
+      localStorage.setItem('token', response);
+      navigate('/', { replace: true });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
