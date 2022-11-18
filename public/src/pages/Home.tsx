@@ -4,7 +4,6 @@ import {
   Checkbox,
   Heading,
   HStack,
-  Input,
   VStack,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';

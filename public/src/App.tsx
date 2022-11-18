@@ -4,7 +4,7 @@ import {
   Route,
   Routes,
   useLocation,
-  useNavigate
+  useNavigate,
 } from 'react-router-dom';
 import Home from './pages/Home';
 import RegisterUser from './pages/RegisterUser';

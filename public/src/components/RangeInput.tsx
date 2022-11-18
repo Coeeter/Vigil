@@ -1,5 +1,4 @@
 import {
-  Box,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -43,7 +42,9 @@ export default function RangeInput({
           {label}: {value} {units}
         </FormLabel>
         <HStack w="100%" spacing={5}>
-          <Text w={10} textAlign="start">{min}</Text>
+          <Text w={10} textAlign="start">
+            {min}
+          </Text>
           <Slider
             colorScheme="purple"
             value={value}
@@ -56,7 +57,9 @@ export default function RangeInput({
             </SliderTrack>
             <SliderThumb />
           </Slider>
-          <Text w={10} textAlign="end">{max}</Text>
+          <Text w={10} textAlign="end">
+            {max}
+          </Text>
         </HStack>
         <FormHelperText>{helperText}</FormHelperText>
       </FormControl>
