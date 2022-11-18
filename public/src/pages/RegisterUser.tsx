@@ -9,7 +9,7 @@ import {
   InputRightAddon,
   Radio,
   RadioGroup,
-  VStack
+  VStack,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
