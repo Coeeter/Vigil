@@ -2,6 +2,7 @@ import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
 import {
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Input,
   InputGroup,
@@ -14,9 +15,11 @@ import FormBox from './FormBox';
 
 export default function CopyableInput({
   label,
+  helperText,
   textToBeCopied,
 }: {
   label: string;
+  helperText: string;
   textToBeCopied: string;
 }) {
   const [showToolTip, setShowToolTip] = useState(false);
@@ -53,6 +56,7 @@ export default function CopyableInput({
             </Tooltip>
           </InputRightAddon>
         </InputGroup>
+        <FormHelperText>{helperText}</FormHelperText>
       </FormControl>
     </FormBox>
   );

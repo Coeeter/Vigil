@@ -15,6 +15,7 @@ import FormBox from './FormBox';
 export interface RangeInputProps {
   label: string;
   helperText: string;
+  defaultValue: number;
   min: number;
   max: number;
   units: string;
@@ -24,22 +25,17 @@ export interface RangeInputProps {
 export default function RangeInput({
   label,
   helperText,
+  defaultValue,
   min,
   max,
   units,
   onValueChange,
 }: RangeInputProps) {
-  const [value, setValue] = useState((min + max) / 2);
-
-  useEffect(() => {
-    onValueChange(value);
-  }, [value]);
-
   return (
     <FormBox>
       <FormControl>
         <FormLabel>
-          {label}: {value} {units}
+          {label}: {defaultValue} {units}
         </FormLabel>
         <HStack w="100%" spacing={5}>
           <Text w={10} textAlign="start">
@@ -47,8 +43,8 @@ export default function RangeInput({
           </Text>
           <Slider
             colorScheme="purple"
-            value={value}
-            onChange={setValue}
+            value={defaultValue}
+            onChange={onValueChange}
             min={min}
             max={max}
           >

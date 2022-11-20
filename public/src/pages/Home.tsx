@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
   Checkbox,
@@ -11,37 +14,102 @@ import { useNavigate } from 'react-router-dom';
 import CopyableInput from '../components/CopyableInput';
 import FormBox from '../components/FormBox';
 import RangeInput, { RangeInputProps } from '../components/RangeInput';
+import { ClientEvent } from '../events/ClientEvent';
+import useInterval from '../hooks/useInterval';
+import fetch from '../utils/fetch';
 
 export default function Home() {
+  const [dataInStorage, setDataInStorage] = useState<{
+    bpm: number;
+    temp: number;
+    hasFell: boolean;
+  }>({ bpm: 75, temp: 36, hasFell: false });
   const [token, setToken] = useState('');
-  const [bpm, setBpm] = useState<number>(0);
-  const [temp, setTemp] = useState<number>(0);
+  const [bpm, setBpm] = useState(dataInStorage.bpm);
+  const [temp, setTemp] = useState(dataInStorage.temp);
+  const [hasFell, setHasFell] = useState(dataInStorage.hasFell);
+  const [notSaved, setNotSaved] = useState(false);
   const navigate = useNavigate();
 
   const inputs: RangeInputProps[] = [
     {
       label: 'Patients BPM',
       helperText: 'To replicate the heart rate in beats per minute (BPM)',
-      min: 50,
-      max: 100,
+      defaultValue: bpm,
+      min: 20,
+      max: 210,
       units: 'BPM',
-      onValueChange: setTemp,
+      onValueChange: setBpm,
     },
     {
       label: 'Patients Temperature',
       helperText: 'To replicate the temperature in degrees celcius (°C)',
-      min: 20,
-      max: 50,
+      defaultValue: temp,
+      min: 34,
+      max: 40,
       units: '°C',
-      onValueChange: setBpm,
+      onValueChange: setTemp,
     },
   ];
+
+  const saveConfig = () => {
+    const data = {
+      bpm,
+      temp,
+      hasFell,
+    };
+    localStorage.setItem('data', JSON.stringify(data));
+    setDataInStorage(data);
+  };
+
+  const uploadData = () => {
+    fetch(
+      ClientEvent.DATA_COLLECTED,
+      token,
+      dataInStorage.bpm,
+      dataInStorage.temp,
+      new Date(Date.now()),
+      dataInStorage.hasFell
+    );
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return navigate('/register-user');
     setToken(token);
+    const data = localStorage.getItem('data');
+    if (data) {
+      const obj = JSON.parse(data);
+      setDataInStorage(obj);
+      setBpm(obj.bpm);
+      setTemp(obj.temp);
+      setHasFell(obj.hasFell);
+    }
   }, []);
+
+  useEffect(() => {
+    if (!dataInStorage) {
+      if (bpm != 75 || temp != 36 || hasFell == false) {
+        setNotSaved(true);
+      }
+      return setNotSaved(false);
+    }
+    if (
+      dataInStorage.bpm != bpm ||
+      dataInStorage.hasFell != hasFell ||
+      dataInStorage.temp != temp
+    )
+      return setNotSaved(true);
+    setNotSaved(false);
+  }, [bpm, temp, hasFell, dataInStorage]);
+
+  useInterval(
+    () => {
+      uploadData();
+    },
+    15000,
+    [dataInStorage]
+  );
 
   return (
     <Box>
@@ -52,6 +120,7 @@ export default function Home() {
             bg="transparent"
             onClick={() => {
               localStorage.removeItem('token');
+              localStorage.removeItem('data');
               navigate('/register-user');
             }}
           >
@@ -67,25 +136,55 @@ export default function Home() {
           alignItems="start"
           onSubmit={e => {
             e.preventDefault();
-            console.log(e.target);
+            saveConfig();
           }}
         >
-          <CopyableInput label="Device id" textToBeCopied={token} />
+          <CopyableInput
+            label="Device id"
+            textToBeCopied={token}
+            helperText="The device id and the data below will be sent every 15 seconds"
+          />
           {inputs.map((item, index) => (
             <RangeInput key={index} {...item} />
           ))}
           <FormBox>
-            <Checkbox colorScheme="purple">Has fell down?</Checkbox>
+            <Checkbox
+              colorScheme="purple"
+              isChecked={hasFell}
+              onChange={e => setHasFell(e.target.checked)}
+            >
+              Has fell down?
+            </Checkbox>
           </FormBox>
-          <Button
-            type="submit"
-            bg="purple.600"
-            _hover={{ bg: 'purple.500' }}
-            _active={{ bg: 'purple.700' }}
-            w="100%"
-          >
-            Submit
-          </Button>
+          <HStack w="100%">
+            <Button
+              flexGrow="1"
+              variant="outline"
+              disabled={!notSaved}
+              onClick={() => {
+                setBpm(dataInStorage.bpm);
+                setTemp(dataInStorage.temp);
+                setHasFell(dataInStorage.hasFell);
+              }}
+            >
+              Revert
+            </Button>
+            <Button
+              type="submit"
+              bg="purple.600"
+              flexGrow="1"
+              _hover={{ bg: 'purple.500' }}
+              _active={{ bg: 'purple.700' }}
+            >
+              Save
+            </Button>
+          </HStack>
+          {notSaved ? (
+            <Alert status="warning">
+              <AlertIcon />
+              <AlertTitle>Some changes have not been saved</AlertTitle>
+            </Alert>
+          ) : null}
         </VStack>
       </VStack>
     </Box>
