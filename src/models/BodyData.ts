@@ -3,7 +3,7 @@ class BodyData {
   userId: string;
   heartRate: number;
   temperature: number;
-  timeRecorded: Date;
+  timeRecorded: number;
   hasFell: boolean;
 
   constructor(
@@ -11,7 +11,7 @@ class BodyData {
     userId: string,
     heartRate: number,
     temperature: number,
-    timeRecorded: Date,
+    timeRecorded: number,
     hasFell: boolean
   ) {
     this.id = id;

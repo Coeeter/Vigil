@@ -51,9 +51,10 @@ class DeviceController {
       userId,
       heartRate,
       temperature,
-      timeRecorded,
+      new Date(timeRecorded).getTime(),
       hasFell
     );
+    console.log(data);
     this.device.publish(ClientEvent.DATA_COLLECTED, JSON.stringify(data));
   };
 }

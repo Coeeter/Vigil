@@ -3,4 +3,8 @@
 /certs
 /.env
 /public/node_modules
-/lambdas/get-users/node_modules
+/aws/kinesis-analytics/vigil-analytics/build
+/aws/kinesis-analytics/vigil-analytics/.gradle
+/aws/kinesis-analytics/vigil-analytics/.idea
+/aws/kinesis-analytics/vigil-analytics/gradle.properties
+/aws/lambdas/node_modules

@@ -107,8 +107,8 @@ export default function Home() {
     () => {
       uploadData();
     },
-    15000,
-    [dataInStorage]
+    10000,
+    [dataInStorage, token]
   );
 
   return (
