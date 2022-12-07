@@ -4,5 +4,5 @@ This project contains the source code of my lambda functions(`/aws/lambdas`) as 
 
 ## To run the project
 ```cmd
-$ .\run.bat
+$ npm run serve
 ```
